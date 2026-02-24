@@ -22,7 +22,7 @@ const faqs = [
   {
     question: "What should I share?",
     answer:
-      "General context is enough. Use placeholders for names and teams.",
+      "This WebApp runs offline on your device which means, NOTHING is uploaded to the cloud by this app Share what’s needed to coach the scenario: what happened, the setting (meeting/1:1/email), and what outcome you want. If you’re unsure, start with 2–3 sentences and keep it generic.",
   },
   {
     question: "Is this confidential?",
@@ -143,7 +143,7 @@ export function Landing() {
             className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 cursor-pointer group transition-opacity hover:opacity-70"
             aria-label="Scroll to coach selection"
           >
-            <p className="text-xs font-medium text-[var(--ink-primary)] text-[#ffffff]">Scroll</p>
+            <p className="text-xs font-medium text-white">Scroll</p>
             <ChevronDown 
               className="h-5 w-5 text-[var(--ink-primary)] motion-safe:animate-[bounce_2s_ease-in-out_infinite]" 
             />

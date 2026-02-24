@@ -13,7 +13,6 @@ export function RotatingGoalWord() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Check for reduced motion preference
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mediaQuery.matches);
 
@@ -24,33 +23,28 @@ export function RotatingGoalWord() {
   }, []);
 
   useEffect(() => {
-    // Don't animate if user prefers reduced motion
     if (prefersReducedMotion) return;
-
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % phrases.length);
-    }, 2000); // Rotate every 2 seconds
-
+    }, 2000);
     return () => clearInterval(interval);
   }, [prefersReducedMotion]);
 
-  // If reduced motion, just show "Goal this Year"
+  // Reduced motion: show first phrase, with ? as part of the same line
   if (prefersReducedMotion) {
     return (
-      <>
-        <span
-          className="inline-block font-bold"
-          style={{ color: phrases[0].color }}
-        >
+      <span className="inline-flex items-baseline justify-center gap-2">
+        <span className="inline-block font-bold" style={{ color: phrases[0].color }}>
           {phrases[0].text}
         </span>
-        <span className="inline-block ml-1 font-bold text-[var(--ink-primary)]">?</span>
-      </>
+        <span className="inline-block font-bold text-white">?</span>
+      </span>
     );
   }
 
   return (
     <span className="inline-flex items-baseline justify-center gap-2">
+      {/* Fixed-width rotator box to prevent layout shift */}
       <span className="relative inline-block min-w-[13rem] text-center">
         {phrases.map((phrase, index) => (
           <span
@@ -59,19 +53,20 @@ export function RotatingGoalWord() {
             style={{
               color: phrase.color,
               opacity: currentIndex === index ? 1 : 0,
-              transform:
-                currentIndex === index
-                  ? "translateY(0)"
-                  : "translateY(-8px)",
+              transform: currentIndex === index ? "translateY(0)" : "translateY(-8px)",
             }}
           >
-            {phrase.text}
+            {/* Put the ? INSIDE the phrase so it moves with the text */}
+            {phrase.text}{" "}
+            <span className="text-white">?</span>
           </span>
         ))}
-        {/* Invisible spacer to maintain layout width - using longest phrase */}
-        <span className="invisible inline-block font-bold">Annoying Pain-point</span>
+
+        {/* Invisible spacer: include the ? too so width stays consistent */}
+        <span className="invisible inline-block font-bold">
+          Annoying Pain-point <span>?</span>
+        </span>
       </span>
-      <span className="inline-block font-bold text-[var(--ink-primary)] text-[#ffffff]">?</span>
     </span>
   );
 }
