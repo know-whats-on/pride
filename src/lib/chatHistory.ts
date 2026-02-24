@@ -81,6 +81,29 @@ export function saveSession(session: ChatSession): void {
 }
 
 /**
+ * Update an existing session (replaces session with same ID)
+ */
+export function updateSession(session: ChatSession): void {
+  try {
+    const allSessions = getAllSessions();
+    
+    // Find and replace the session with matching ID
+    const existingIndex = allSessions.findIndex((s) => s.id === session.id);
+    
+    if (existingIndex !== -1) {
+      // Replace existing session
+      allSessions[existingIndex] = session;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(allSessions));
+    } else {
+      // Session doesn't exist, save as new
+      saveSession(session);
+    }
+  } catch (error) {
+    console.error("Failed to update chat session:", error);
+  }
+}
+
+/**
  * Get a specific session by ID
  */
 export function getSession(id: string): ChatSession | null {

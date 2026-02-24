@@ -18,6 +18,61 @@ const coachData: Record<CoachId, { name: string; color: string }> = {
   power: { name: "Power", color: "var(--accent-power)" },
 };
 
+/**
+ * Enforce consistent readability in transcripts:
+ * - Treat recognized section labels as headings.
+ * - Force blank lines via markdown heading blocks.
+ */
+function formatCoachOutput(text: string) {
+  const headingSet = new Set([
+    "Your Presence Snapshot (Voice + Values)",
+    "Your Pride Leadership Snapshot (Belonging + Boundaries)",
+    "Power Profile",
+    "Voice Audit",
+    "Values Snapshot",
+    "Pattern",
+    "DO",
+    "DON'T",
+    "DON’T",
+    "TRY NEXT WEEK",
+    "Micro-Bravery",
+    "AI Disclaimer",
+    "Belonging Insight",
+    "Boundary Pattern",
+    "THIS QUARTER",
+    "Boundary Blueprint",
+    "Scripts",
+    "Impact Map",
+    "3-step plan",
+    "Reflection",
+    "Disclaimer",
+    "One Reflective Prompt",
+  ]);
+
+  const normalized = text.replace(/\r\n/g, "\n").trim();
+  const lines = normalized.split("\n");
+  const out: string[] = [];
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    const isHeading =
+      headingSet.has(line) ||
+      (line.length <= 42 &&
+        /^[A-Z][A-Za-z0-9 &'\/()+–—-]+$/.test(line) &&
+        !/^(\d+\.|[-*])\s/.test(line));
+
+    if (isHeading) {
+      out.push(`\n### ${line}\n`);
+    } else {
+      out.push(`${line}\n`);
+    }
+  }
+
+  return out.join("\n").replace(/\n{4,}/g, "\n\n\n");
+}
+
 export function ChatTranscript() {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -28,7 +83,6 @@ export function ChatTranscript() {
   const coachMatch = pathname.match(/\/coach\/(presence|pride|power)\//);
   const coach = coachMatch ? (coachMatch[1] as CoachId) : null;
 
-  // Validate parameters and session
   useEffect(() => {
     if (!coach || !sessionId || !coachData[coach]) {
       navigate("/history");
@@ -41,13 +95,11 @@ export function ChatTranscript() {
     }
   }, [coach, sessionId, navigate]);
 
-  // Early return if invalid (but don't navigate during render)
   if (!coach || !sessionId || !coachData[coach]) {
     return null;
   }
 
   const session = getSession(sessionId);
-
   if (!session) {
     return null;
   }
@@ -77,9 +129,11 @@ export function ChatTranscript() {
             <ArrowLeft className="h-4 w-4" />
             History
           </Button>
+
           <h1 className="truncate text-base font-semibold text-[var(--ink-primary)] max-w-[200px] md:max-w-none">
             {session.title}
           </h1>
+
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -90,6 +144,7 @@ export function ChatTranscript() {
               <Download className="h-4 w-4" />
               <span className="hidden md:inline">Export</span>
             </Button>
+
             <Button
               variant="ghost"
               size="sm"
@@ -116,7 +171,8 @@ export function ChatTranscript() {
                 This chat has ended
               </h2>
               <p className="mb-3 text-sm text-[var(--ink-secondary)]">
-                Chats can't be continued. You can export this transcript or start a new chat.
+                Chats can&apos;t be continued. You can export this transcript or
+                start a new chat.
               </p>
               <Button
                 onClick={handleStartNewChat}
@@ -141,7 +197,8 @@ export function ChatTranscript() {
                 <span className="font-semibold">Coach:</span> {coachName}
               </div>
               <div>
-                <span className="font-semibold">Messages:</span> {session.messages.length}
+                <span className="font-semibold">Messages:</span>{" "}
+                {session.messages.length}
               </div>
             </div>
             <div className="mt-2 flex items-center justify-between text-xs text-[var(--ink-secondary)]">
@@ -191,12 +248,9 @@ export function ChatTranscript() {
                     "
                   >
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {message.content
-                        // ensure a blank line before markdown headings like ### Title
-                        .replace(/\n(?=#{1,6}\s)/g, "\n\n\n")
-                        // ensure a blank line before bold "heading" lines like **Power Profile**
-                        .replace(/\n(?=\*\*[^*\n]{2,60}\*\*\s*$)/gm, "\n\n\n")
-                      }
+                      {message.role === "user"
+                        ? message.content
+                        : formatCoachOutput(message.content)}
                     </ReactMarkdown>
                   </div>
                 </div>

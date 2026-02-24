@@ -103,14 +103,7 @@ export function CoachPage({
               >
                 Start chat
               </Button>
-              <div className="mt-2 text-center">
-                <button
-                  onClick={() => navigate(`/coach/${type}/history`)}
-                  className="text-xs text-[var(--ink-secondary)] hover:text-[var(--ink-primary)] transition-colors"
-                >
-                  View chat history
-                </button>
-              </div>
+              
             </div>
 
             {/* Use Cases */}
