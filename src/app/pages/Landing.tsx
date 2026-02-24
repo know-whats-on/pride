@@ -231,6 +231,52 @@ export function Landing() {
               </Button>
             </div>
           </div>
+
+          {/* Pride, Presence & Power Footer Disclaimer */}
+          <div className="mx-auto mt-8 max-w-4xl px-4 md:px-8">
+            <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-muted)] p-5 md:p-6">
+              
+              <p className="text-[13px] leading-relaxed text-[var(--ink-secondary)] md:text-[14px]">
+                Disclaimer: The system prompts, agent designs, and interaction logic are developed by and proprietary to{" "}
+                <a
+                  href="https://www.linkedin.com/in/therushivyas/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-700 break-words"
+                >
+                  Rushi Vyas
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://www.knowwhatson.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-700 break-words"
+                >
+                  What's On! Campus Pty Ltd
+                </a>
+                . The coaching frameworks referenced within the system prompts were sourced and provided by{" "}
+                <a
+                  href="https://drkelseyburton.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-700 break-words"
+                >
+                  Dr. Kelsey Burton
+                </a>
+                . This tool was developed as part of{" "}
+                <a
+                  href="https://www.eventbrite.com.au/e/pride-presence-power-human-centred-leadership-in-the-age-of-ai-tickets-1982400654723"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-700 break-words"
+                >
+                  UNSW AGSM's "Pride, Presence & Power: Human-Centred Leadership in the Age of AI"
+                </a>{" "}
+                event. Chatbot outputs are for general workplace learning and reflection only and should be applied with professional judgement; this tool does not provide therapy, diagnosis, legal advice, or HR directives.
+              </p>
+            </div>
+          </div>
         </footer>
       </main>
 

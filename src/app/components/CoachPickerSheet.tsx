@@ -52,6 +52,9 @@ export function CoachPickerSheet({
           <SheetTitle className="text-center text-base font-normal text-[var(--ink-secondary)]">
             Pick one to start. You can switch anytime.
           </SheetTitle>
+          <SheetDescription className="sr-only">
+            Choose from Pride, Presence, or Power coach to begin your coaching session
+          </SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-col gap-4">

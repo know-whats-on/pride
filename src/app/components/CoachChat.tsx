@@ -43,6 +43,7 @@ export function CoachChat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const sessionStartTime = useRef<number>(Date.now());
   const hasSavedSession = useRef<boolean>(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -51,6 +52,16 @@ export function CoachChat({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      const newHeight = Math.min(textarea.scrollHeight, 120); // Cap at ~4 lines
+      textarea.style.height = `${newHeight}px`;
+    }
+  }, [inputValue]);
 
   // Save session on unmount if user actually chatted
   useEffect(() => {
@@ -145,16 +156,9 @@ export function CoachChat({
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "coach",
-        content: "Sorry — I couldn’t reach the coach right now. Please try again.",
+        content: "Sorry — I couldn't reach the coach right now. Please try again.",
       };
       setMessages((prev) => [...prev, errorMessage]);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
     }
   };
 
@@ -256,7 +260,7 @@ export function CoachChat({
                       {message.content
                         // ensure a blank line before markdown headings like ### Title
                         .replace(/\n(?=#{1,6}\s)/g, "\n\n\n")
-                        // ensure a blank line before bold “heading” lines like **Power Profile**
+                        // ensure a blank line before bold "heading" lines like **Power Profile**
                         .replace(/\n(?=\*\*[^*\n]{2,60}\*\*\s*$)/gm, "\n\n\n")
                       }
                     </ReactMarkdown>
@@ -288,16 +292,27 @@ export function CoachChat({
           )}
 
           {/* Input */}
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
-              className="flex-1 rounded-full border border-[var(--border-subtle)] bg-white px-4 py-3 text-sm text-[var(--ink-primary)] placeholder:text-[var(--ink-tertiary)] focus:outline-none focus:ring-2"
-              style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
-            />
+          <div className="flex items-end gap-2">
+            <div className="flex-1">
+              <textarea
+                ref={textareaRef}
+                rows={1}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder="Type your message..."
+                className="w-full resize-none overflow-y-auto rounded-3xl border border-[var(--border-subtle)] bg-white px-4 py-3 text-sm text-[var(--ink-primary)] placeholder:text-[var(--ink-tertiary)] focus:outline-none focus:ring-2"
+                style={{ 
+                  "--tw-ring-color": accentColor,
+                  maxHeight: "120px",
+                } as React.CSSProperties}
+              />
+            </div>
             <Button
               onClick={() => handleSend()}
               disabled={!inputValue.trim()}
@@ -308,6 +323,20 @@ export function CoachChat({
               <Send className="h-5 w-5" />
               <span className="sr-only">Send</span>
             </Button>
+          </div>
+
+          {/* Disclaimer */}
+          <p className="mt-2 pb-1 text-[12px] text-[var(--ink-tertiary)] md:text-[13px] text-center text-[#656565] font-bold">For learning, not decision-making. Developed by <a
+              href="https://www.knowwhatson.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-[var(--ink-secondary)] focus:outline-none focus:ring-2 focus:ring-offset-1"
+              style={{ "--tw-ring-color": accentColor } as React.CSSProperties}
+            >What's On!</a></p>
+
+          {/* Full Disclaimer */}
+          <div className="mt-3 text-[12px] leading-relaxed text-[var(--ink-tertiary)] md:text-[13px]">
+            
           </div>
         </div>
       </div>
